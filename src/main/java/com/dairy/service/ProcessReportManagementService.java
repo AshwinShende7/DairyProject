@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dairy.model.processManagement.RPTProcessMilkJournalReportMaster;
+import com.dairy.model.processManagement.RptProcessByProductJournalReport;
 import com.dairy.model.processManagement.RptProcessCreamReport;
 import com.dairy.repository.processManagement.RPTProcessMilkJournalReportRepo;
+import com.dairy.repository.processManagement.RptProcessByProductJournalReportRepo;
 import com.dairy.repository.processManagement.RptProcessCreamReportRepo;
 
 
@@ -27,6 +29,9 @@ public class ProcessReportManagementService {
 	
 	@Autowired
 	private RptProcessCreamReportRepo rptProcessCreamReportRepo ;
+	
+	@Autowired
+	private RptProcessByProductJournalReportRepo rptProcessByProductJournalReportRepo ;
 
 	public RPTProcessMilkJournalReportMaster save(RPTProcessMilkJournalReportMaster rPTProcessMilkJournalReportMaster) {
 		return rRPTProcessMilkJournalReportRepo.save(rPTProcessMilkJournalReportMaster);
@@ -88,17 +93,28 @@ public class ProcessReportManagementService {
 	
 	//Rpt Process Cream Report
 	public RptProcessCreamReport saveCreamReport(RptProcessCreamReport rptProcessCreamReport) {
-		// TODO Auto-generated method stub
 		return rptProcessCreamReportRepo.save(rptProcessCreamReport);
 	}
 
 	public List<RptProcessCreamReport> getCreamReport() {
-		// TODO Auto-generated method stub
 		return rptProcessCreamReportRepo.findAll();
 	}
 
 	public List<RptProcessCreamReport> findByDateBetween4(String getfDate, String gettDate) {
-		// TODO Auto-generated method stub
 		return rptProcessCreamReportRepo.findByDateBetween(getfDate, gettDate);
+	}
+	
+	//Rpt Process By Product Journal Report
+	public RptProcessByProductJournalReport saveProductJournalReport(
+			RptProcessByProductJournalReport rptProcessByProductJournalReport) {
+		return rptProcessByProductJournalReportRepo.save(rptProcessByProductJournalReport);
+	}
+
+	public List<RptProcessByProductJournalReport> getprodctJournalReport() {
+		return rptProcessByProductJournalReportRepo.findAll();
+	}
+
+	public List<RptProcessByProductJournalReport> findproductJournalReportByDate(String getfDate, String gettDate) {
+		return rptProcessByProductJournalReportRepo.findByDateBetween(getfDate, gettDate);
 	}
 }

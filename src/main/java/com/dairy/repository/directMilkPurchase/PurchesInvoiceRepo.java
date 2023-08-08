@@ -14,4 +14,6 @@ public interface PurchesInvoiceRepo extends JpaRepository<PurchesInvoiceMaster,I
 int deleteByid(int id);
 
 List<PurchesInvoiceMaster> findByDateBetween(String getfDate, String gettDate);
+
+List<PurchesInvoiceMaster> findByid(int id);
 }
