@@ -1,6 +1,7 @@
 package com.dairy.controller;
 
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +25,7 @@ import com.dairy.service.DirectMilkPurchaseService;
 
 
 @Controller
-
+@CrossOrigin(origins = "http://localhost:3000")
 public class DirectMilkPurchaseController {
 	
 	@Autowired
@@ -33,41 +35,58 @@ public class DirectMilkPurchaseController {
 	@Autowired
 	private  PurchesInvoiceRepo purchesInvoiceRepo;
 	
-	//save
-	@PostMapping("/savePurchesInvoice")
-	public Response savePurchesInvoice(@RequestBody PurchesInvoiceMaster purchesInvoiceMaster)
-	{
-		Response response = new Response();
-		response.setStatus("Not Success");
-    	response.setMessage("Data Not Saved..!!");
-    	
-    	String clr = purchesInvoiceMaster.getClr();
-		String fat1 = purchesInvoiceMaster.getFat();
+	//Save
+		@PostMapping("/savePurchesInvoice")
+		@ResponseBody
+		public Response savePurchesInvoice(@RequestBody PurchesInvoiceMaster purchesInvoiceMaster)
+		{
+			Response response = new Response();
+			response.setStatus("Not Success");
+	    	response.setMessage("Data Not Saved..!!");
+	    	
+	    	String clr = purchesInvoiceMaster.getClr();
+			String fat1 = purchesInvoiceMaster.getFat();
 
-		double clr1 = Double.parseDouble(clr);
-		double fat2 = Double.parseDouble(fat1);
+			double clr1 = Double.parseDouble(clr);
+			double fat2 = Double.parseDouble(fat1);
+			DecimalFormat df=new DecimalFormat("####.##");
+			
+			double result = clr1 / 4 + 0.2 * fat2 + 0.66;
+			
 
-		double result = clr1 / 4 + 0.2 * fat2 + 0.66;
-
-		purchesInvoiceMaster.setSnf(String.valueOf(result));
-    	
-    	PurchesInvoiceMaster purchesInvoiceMaster2=directMilkPurchaseService.savePurchesInvoice(purchesInvoiceMaster);
-    	if(purchesInvoiceMaster2 != null)
-    	{
-    		response.setStatus("Success");
-		    response.setMessage("Data Saved Successfully..!!");
-		    response.setData(purchesInvoiceMaster2);
-    	}
-    	return response;
-	}
+			purchesInvoiceMaster.setSnf(String.valueOf(df.format(result)));
+			
+			double rate=Double.parseDouble(purchesInvoiceMaster.getRate());
+			double trRate=Double.parseDouble(purchesInvoiceMaster.getTransportRate());
+			double overcharge=Double.parseDouble(purchesInvoiceMaster.getOverCharge());
+			double weight=Double.parseDouble(purchesInvoiceMaster.getWeight());
+			
+			purchesInvoiceMaster.setInKg(String.valueOf(weight*1.03));//Milk Density=1.03
+			
+			double total=((rate+trRate+overcharge)*weight);
+			
+			purchesInvoiceMaster.setTotal(String.valueOf(df.format(total)));
+			
+	    	
+	    	PurchesInvoiceMaster purchesInvoiceMaster2=directMilkPurchaseService.savePurchesInvoice(purchesInvoiceMaster);
+	    	if(purchesInvoiceMaster2 != null)
+	    	{
+	    		response.setStatus("Success");
+			    response.setMessage("Data Saved Successfully..!!");
+			    response.setData(purchesInvoiceMaster2);
+	    	}
+	    	return response;
+		}
 	
 	//find all
 	@GetMapping("/findAllPurchesInvoice")
+	@ResponseBody
 	public List<PurchesInvoiceMaster> findAllPurchesInvoice(){
 		return directMilkPurchaseService.findAllPurchesInvoice();
 	}
 	
 	//deleteById
+	@ResponseBody
 	@PostMapping("/deletePurchesInvoiceById")
 	public ResponseEntity<String>deletePurchesInvoiceById(@RequestBody PurchesInvoiceMaster purchesInvoiceMaster){
 	int i=purchesInvoiceRepo.deleteByid(purchesInvoiceMaster.getId());
@@ -82,6 +101,7 @@ public class DirectMilkPurchaseController {
 	}
 	
 	//findPurchesInvoiceByDateBetween
+	@ResponseBody
 	@GetMapping("/findPurchesInvoiceByDateBetween")
 	public Response findPurchesInvoiceByDateBetween(@RequestBody PurchesInvoiceMaster purchesInvoiceMaster) {
 		Response response=new Response();
@@ -104,6 +124,13 @@ public class DirectMilkPurchaseController {
 		return purchesInvoiceRepo.findByid(purchesInvoiceMaster.getId());
 		
 	}
+	
+	//findPurchesInvoiceById
+			@GetMapping("/findPurchesInvoiceById")
+			@ResponseBody
+			public PurchesInvoiceMaster  findPurchesInvoiceById(@RequestParam("id") int id) {
+				return directMilkPurchaseService.findPurchesInvoiceById(id);
+			}
 	
 	
 	@PostMapping("/updateBySelectId")
@@ -148,15 +175,23 @@ public class DirectMilkPurchaseController {
 		try {
 			List<PurchesInvoiceMaster> add = purchesInvoiceRepo.findByid(id);
 			add.forEach(s->{
-				if(!(date==null) && !(collectionType==null)) {
-					try {
-						
-						s.setDate(date);
-						s.setCollectionType(collectionType);
-					}catch (Exception e) {
+				 if (!(fat == null) && !(clr == null)) {
+		                try {
+		                	String clr1 = s.getClr();
+		            		String fat1 = s.getFat();
+
+		                    double clr2 = Double.parseDouble(clr);
+		                    double fat2 = Double.parseDouble(fat);
+
+		                    double result = clr2 / 4 + 0.2 * fat2 + 0.66;
+		                    
+		                    s.setSnf(String.valueOf(result));
+					}catch (NumberFormatException e) {
 						e.printStackTrace();
 					}
 				}
+				s.setDate(date);
+				s.setCollectionType(collectionType);
 				s.setInwordId(inwordId);
 				s.setVendorName(vendorName);
 				s.setAddress(address);

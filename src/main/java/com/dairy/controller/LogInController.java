@@ -23,7 +23,7 @@ import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 @Controller
 @RequestMapping("/login")
-@CrossOrigin(origins = "http://localhost:")
+@CrossOrigin(origins = "http://localhost:3000")
 public class LogInController {
 
 	@Autowired
