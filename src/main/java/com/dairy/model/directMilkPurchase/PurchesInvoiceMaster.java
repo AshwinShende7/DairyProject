@@ -24,6 +24,7 @@ public class PurchesInvoiceMaster {
 	private String batch;
 	private String mbrt;
 	private String fat;
+	private String clr;
 	private String snf;
 	private String warehouse;
 	private String temp;
@@ -50,7 +51,12 @@ public class PurchesInvoiceMaster {
 	private String fDate;
 	@Transient
 	private String tDate;
-	
+	public String getClr() {
+		return clr;
+	}
+	public void setClr(String clr) {
+		this.clr = clr;
+	}
 	public int getId() {
 		return id;
 	}

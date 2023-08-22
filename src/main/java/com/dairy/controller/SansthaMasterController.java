@@ -5,12 +5,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,15 +24,20 @@ import com.dairy.model.sansthaMaster.SansthaMaster;
 import com.dairy.repository.sansthaMaster.PerRateContractMasterRepo;
 import com.dairy.repository.sansthaMaster.PurRateExcelImportRepo;
 import com.dairy.repository.sansthaMaster.SansthaMasterRepo;
-import com.dairy.service.FileStorageService;
 import com.dairy.service.SansthaMasterService;
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+
+
+
+
+
 
 @Controller
+@CrossOrigin(origins = "http://localhost:3000")
 public class SansthaMasterController {
 
 	@Autowired
-	private SansthaMasterService sansthaMasterservice;
+//	private SansthaMasterService sansthaMasterservice;
+	private SansthaMasterService sansthaMasterService ;
 
 	@Autowired
 	private SansthaMasterRepo sansthaMasterrepo;
@@ -84,7 +89,7 @@ public class SansthaMasterController {
 	@GetMapping("/getallPurRateData")
 	@ResponseBody
 	public List<PurRateExcleImport> getallpurRatedata() {
-		return sansthaMasterservice.getallpurRatedata();
+		return sansthaMasterService.getallpurRatedata();
 	}
 
 	//delete Pur Rate Data By Id
@@ -109,12 +114,12 @@ public class SansthaMasterController {
 	//Save Sanstha master
 	@PostMapping("/saveSanstha")
 	@ResponseBody
-	public Response savesansthaMaster(@RequestBody SansthaMaster sansthamaster) {
+	public Response<T> savesansthaMaster(@RequestBody SansthaMaster sansthamaster) {
 		Response response = new Response();
 		response.setStatus("Not Success..");
 		response.setMessage("Data Not Saved..!!");
 
-		SansthaMaster sm2 = sansthaMasterservice.saveSansthaMasterNew(sansthamaster);
+		SansthaMaster sm2 = sansthaMasterService.saveSansthaMasterNew(sansthamaster);
 		if (sm2 != null) {
 			response.setStatus("Success");
 			response.setMessage("Data Saved Successfully..!!");
@@ -127,7 +132,7 @@ public class SansthaMasterController {
 	@GetMapping("/findallmasterdata")
 	@ResponseBody
 	public List<SansthaMaster> findallData() {
-		return sansthaMasterservice.findAllData();
+		return sansthaMasterService.findAllData();
 	}
 
 	// Delete Data
@@ -152,7 +157,7 @@ public class SansthaMasterController {
 		String headerkey = "Content-Disposition";
 		String headervalue = "attachement;filename=sansthamaster.xls";
 		res.setHeader(headerkey, headervalue);
-		sansthaMasterservice.generateExcel1(res);
+		sansthaMasterService.generateExcel1(res);
 
 	}
 
@@ -166,7 +171,7 @@ public class SansthaMasterController {
 		response.setStatus("Not Success..");
 		response.setMessage("Data Not Saved..!!");
 
-		PerRateContractMaster perRateContactMaster = sansthaMasterservice
+		PerRateContractMaster perRateContactMaster = sansthaMasterService
 				.saveperratecontractMaster(perratecontractmaster);
 		if (perRateContactMaster != null) {
 			response.setStatus("Success..");
@@ -195,7 +200,7 @@ public class SansthaMasterController {
 	@GetMapping("/findallPerRatecontractMasterData")
 	@ResponseBody
 	public List<PerRateContractMaster> findPerRateContractMasterData() {
-		return sansthaMasterservice.findAlldata();
+		return sansthaMasterService.findAlldata();
 
 	}
 
@@ -207,7 +212,7 @@ public class SansthaMasterController {
 		String headerkey = "Content-Disposition";
 		String headervalue = "attachement;filename=perratecontractmaster.xls";
 		res.setHeader(headerkey, headervalue);
-		sansthaMasterservice.generateExcel(res);
+		sansthaMasterService.generateExcel(res);
 
 	}
 

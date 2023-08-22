@@ -10,6 +10,9 @@ import com.dairy.model.LogIn;
 @EnableJpaRepositories
 public interface LogInRepo extends JpaRepository<LogIn, Long> {
 
+	
+	LogIn findByusername(String username);
+
 	LogIn findByUsername(String username);
 
 }

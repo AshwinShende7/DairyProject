@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,16 +18,19 @@ import com.dairy.model.processManagement.ByProductProcessJournal;
 import com.dairy.model.processManagement.CreamJournal;
 import com.dairy.model.processManagement.ProcessJournalMilk;
 import com.dairy.model.processManagement.RPTProcessMilkJournalReportMaster;
+import com.dairy.model.processManagement.RptProcessByProductJournalReport;
 import com.dairy.model.processManagement.RptProcessCreamReport;
 import com.dairy.repository.processManagement.ByProductProcessJournalRepo;
 import com.dairy.repository.processManagement.CreamJournalRepo;
 import com.dairy.repository.processManagement.ProcessJournalMilkRepo;
 import com.dairy.repository.processManagement.RPTProcessMilkJournalReportRepo;
+import com.dairy.repository.processManagement.RptProcessByProductJournalReportRepo;
 import com.dairy.repository.processManagement.RptProcessCreamReportRepo;
 import com.dairy.service.ProcessManagementService;
 import com.dairy.service.ProcessReportManagementService;
 
 @Controller
+@CrossOrigin(origins = "http://localhost:3000")
 public class ProcessManagementController {
 
 	@Autowired
@@ -49,6 +53,10 @@ public class ProcessManagementController {
 	
 	@Autowired
 	private RptProcessCreamReportRepo rptProcessCreamReportRepo ;
+	
+	@Autowired
+	private RptProcessByProductJournalReportRepo rptProcessByProductJournalReportRepo ;
+
 
 	// Cream Journal
 	// Save Cream Journal Data
@@ -357,4 +365,76 @@ public class ProcessManagementController {
 		}
 		return response;
 	}
+	
+	
+	//RptProcessByProductJournalReport Method
+	  //Save RptProcessByProductJournalReport
+	  	@PostMapping("/SaveProductoJournalReport")
+	  	@ResponseBody
+	  	public Response SaveProductReport(@RequestBody  RptProcessByProductJournalReport rptProcessByProductJournalReport)
+	  	{
+	  		Response resp=new Response();
+	  		resp.setStatus("Data Not Saved");
+	  		resp.setMessage("Data Not Saved Successfully");
+	  		
+	  		RptProcessByProductJournalReport rpcr=processReportManagementService.saveProductJournalReport(rptProcessByProductJournalReport);
+	  		if(rpcr!=null)
+	  		{
+	  			resp.setStatus("Data Saved");
+	  			resp.setMessage("Data Saved Successfully");
+	  			resp.setData(rpcr);
+	  		}
+	  		return resp;
+	  	}
+	  	
+	  	//Get All RptProcessByProductJournalReport
+	  	@GetMapping("/getProductJournalReport")
+	  	@ResponseBody
+	  	public List<RptProcessByProductJournalReport> getProductJournalReport()
+	  	{
+	  		return processReportManagementService.getprodctJournalReport();
+	  		
+	  	}
+	  	
+	  	
+	  	//Delete data By Id of RptProcessByProductJournalReport
+	  	@PostMapping("/DeleteProductJouralById")
+	  	@ResponseBody
+	  	public ResponseEntity<String> deleteProductJournalById(@RequestBody RptProcessByProductJournalReport rptprocessByProductJournalReport)
+	  	{
+	  		int i=rptProcessByProductJournalReportRepo.deleteByid(rptprocessByProductJournalReport.getId());
+	  		if(i>0)
+	  		{
+	  			 return ResponseEntity.ok("Data Deleted Successfully");
+	  			
+	  		}
+	  		else
+	  		{
+	  			return ResponseEntity.badRequest().body("Data Not Found");
+	  		}
+	  	}
+	  
+	  	
+	  	//get RptProcessByProductJournalReport By Date
+	      @GetMapping("/getproductJournalDataByDate")
+	      @ResponseBody
+	      public Response getrptProcessByProductJournalReportdata(@RequestBody RptProcessByProductJournalReport rptProcessbyproductJournalReport)
+	      {
+	     	 Response resp = new Response(); 
+	    	 // response.setStatus("Not Success");
+	    	//  response.setMessage("Data Not Found");
+	    	  
+	    	  List<RptProcessByProductJournalReport> processjournalreport=processReportManagementService.findproductJournalReportByDate(rptProcessbyproductJournalReport.getfDate(), rptProcessbyproductJournalReport.gettDate());
+	       if(!processjournalreport.isEmpty())
+	       {
+	     	  resp.setStatus("Success"); 
+	     	  resp.setMessage("Data Found..!!");
+	     	  resp.setData(processjournalreport); 
+	       }else
+	       {
+	     	  resp.setStatus("Not Success");
+	        	  resp.setMessage("Data Not Found");
+	       }
+	       return resp;
+	      }
 }

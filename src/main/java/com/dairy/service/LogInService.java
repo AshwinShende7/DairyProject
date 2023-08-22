@@ -21,4 +21,9 @@ public class LogInService {
 		return logInRepo.findByUsername(username);
 	}
 
+	public LogIn findByUserNameAndPassword(String username, String password) {
+		// TODO Auto-generated method stub
+		return findByUserNameAndPassword(username,password);
+	}
+
 }

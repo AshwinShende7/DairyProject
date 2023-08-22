@@ -25,5 +25,9 @@ public class DirectMilkPurchaseService {
 	public List<PurchesInvoiceMaster> findByDateBetween(String getfDate, String gettDate) {
 		return purchesInvoiceRepo.findByDateBetween(getfDate,gettDate);
 	}
+	
+	public PurchesInvoiceMaster findPurchesInvoiceById(int id) {
+		 return purchesInvoiceRepo.findById(id);
+	}
 
 }

@@ -1,5 +1,7 @@
 package com.dairy.controller;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,21 +23,27 @@ import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 @Controller
 @RequestMapping("/login")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:3000")
 public class LogInController {
 
 	@Autowired
 	private LogInService logInService;
-
-	@PostMapping
-	public ResponseEntity<?> login(@RequestBody LogIn logIn) {
-		LogIn user = logInService.findByUsername(logIn.getUsername());
-		if (user != null && user.getPassword().equals(logIn.getPassword())) {
-			return ResponseEntity.ok(user);
-		}
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-	}
-}
+	
+	@Autowired
+	private LogInRepo logInRepo ;
+//
+//	@PostMapping("/login")
+//	@ResponseBody
+//	public ResponseEntity<?> login(@RequestBody LogIn logIn,HttpSession session) {
+//		LogIn user = logInService.findByUsername(logIn.getUsername());
+//		if (user != null && user.getPassword().equals(logIn.getPassword())) {
+//			return ResponseEntity.ok(user);
+//		}
+//		session.setAttribute("ID", user.getId());
+//		System.out.println("" + user.getId());
+//		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+//	}
+//}
 
 
 //	@PostMapping("/login")
@@ -57,7 +65,7 @@ public class LogInController {
 //
 //		return response;
 //	}
-//
+
 //	@PostMapping("/LogIn")
 //	@ResponseBody
 //	public Response retrieveLogInDetails(@RequestBody LogIn login) {
@@ -65,7 +73,7 @@ public class LogInController {
 //		response.setStatus("Fail");
 //		response.setMessage("No data found");
 //
-//		LogIn logIn2 = logInService.fingByUserNameAndPassword(login.getUsername(), login.getPassword());
+//		LogIn logIn2 = logInService.findByUserNameAndPassword(login.getUsername(), login.getPassword());
 //		if (logIn2 != null) {
 //			response.setStatus("Success");
 //			response.setMessage("Login Data");
@@ -73,5 +81,8 @@ public class LogInController {
 //		}
 //		return response;
 //	}
+//	
+	
+}
 
 
